@@ -43,6 +43,12 @@ doubleButton = pygame.image.load('ButtonPics/Double.png').convert_alpha()
 doubleButton_Hover = pygame.image.load('ButtonPics/Double_Hover.png').convert_alpha()
 atm_Button = pygame.image.load('ButtonPics/Atm_Button.png').convert_alpha()
 atm_Button_Hover = pygame.image.load('ButtonPics/Atm_Button_Hover.png').convert_alpha()
+playMenu = pygame.image.load("ButtonPics/Play.png").convert_alpha()
+playMenuHover = pygame.image.load("ButtonPics/Play_Hover.png").convert_alpha()
+tutorialButton = pygame.image.load("ButtonPics/Tutorial_Hover.png").convert_alpha()
+tutorialButtonHover = pygame.image.load("ButtonPics/Tutorial.png").convert_alpha()
+quitMenu = pygame.image.load("ButtonPics/QUT_HOVER.png").convert_alpha()
+quitMenuHover = pygame.image.load("ButtonPics/QUIT.png").convert_alpha()
 
 chip_1 = pygame.image.load('ButtonPics/1-chip.png').convert_alpha()
 chip_1_Hover = pygame.image.load('ButtonPics/Hover_Buttons/1-chip_Hover.png').convert_alpha()
@@ -60,7 +66,6 @@ withdraw_All = pygame.image.load('ButtonPics/Withdraw_All.png').convert_alpha()
 withdraw_All_Hover = pygame.image.load('ButtonPics/Withdraw_All_Hover.png').convert_alpha()
 startButton = pygame.image.load('ButtonPics/Start_Button.png').convert_alpha()
 startButton_Hover = pygame.image.load('ButtonPics/Start_Button_Hover.png').convert_alpha()
-
 
 atm1 = pygame.image.load('ButtonPics/Atm buttons/Small_1.png').convert_alpha()
 atm1m = pygame.image.load('ButtonPics/Atm buttons/Small_1-.png').convert_alpha()
@@ -103,6 +108,7 @@ backsong2 = pygame.mixer.Sound('Sounds/Pix-Astral_bunny.WAV')
 backsong3 = pygame.mixer.Sound('Sounds/Jorge Hernandez - Chopsticks.mp3')
 backsong4 = pygame.mixer.Sound('Sounds/Skeletoni.mp3')
 drawCard = pygame.mixer.Sound('Sounds/Draw.wav')
+placeBet = pygame.mixer.Sound('Sounds/PlaceBet.wav')
 
 z = 0
 currentSong = 0
@@ -189,6 +195,10 @@ def aiupdatespeech(milliseconds):
     dealerTalks.play()
     pygame.time.wait(milliseconds)
 
+
+menuPlayButton = button(480,620,playMenu,playMenuHover,playMenu)
+menuTutorialButton = button(685, 620, tutorialButton,tutorialButtonHover,tutorialButton)
+menuQuitButton = button(880,620,quitMenu,quitMenuHover,quitMenu)
 depositButton = button(710,402,deposit_All,deposit_All_Hover,deposit_All)
 WithdrawButton = button(574,402,withdraw_All,withdraw_All_Hover,withdraw_All)
 menuButton = button(343,515,MenuButton,MenuButton_Hover,MenuButton)
@@ -248,12 +258,12 @@ AiSpeech7ATM = SpeechBubble("The home button on the left will take you back to t
 AiSpeech8ATM = SpeechBubble("Whilst the Joycon button on the right will take you back to the game table",1000,50,18)
 AiSpeech9ATM = SpeechBubble("Try taking some chips out of the bank and heading back to table.",1000,50,20)
 
-Test_button = button(150,550,buttonHit,hit_hover,buttonHit)
 
 chip_color = 'White'
 chip_Bank = 250
 players_chips = 0
 setting_bet = 0
+visiablePlayButton = True
 introduciton = True
 inGame = True
 placed_Bets = True
@@ -296,10 +306,13 @@ def restackCheck():
                 card_images[(rank, suit)] = scaled_image
 
 def Introduction():
+    global runonce
 
     if currentstate == "Game":
-        pygame.time.set_timer(Test, int(playlist_Duration.get(currentSong)) * 1000, False)
-        backsong.play()
+        if runonce:
+            pygame.time.set_timer(Test, int(playlist_Duration.get(currentSong)) * 1000, False)
+            backsong.play()
+            runonce = False
         displayscreen.blit(background_Tutorial_1,(0,0))
         displayscreen.blit(ChippyNormal,ChippyNormalR)
         AiSpeech1.drawBubble()
@@ -1023,10 +1036,13 @@ while True:
         if depositButton.draw():
             chip_Bank += players_chips
             players_chips = 0
+            coinssfx.play()
 
         if WithdrawButton.draw():
             players_chips += chip_Bank
             chip_Bank = 0
+            coinssfx.play()
+
 
         if menuButton.draw():
             currentstate = "Menu"
@@ -1041,14 +1057,32 @@ while True:
 
 
     if currentstate == 'Menu':
+        introduciton = True
+        visiablePlayButton = True
 
         displayscreen.blit(background_Menu, (0, 0))
-        if menuButton.draw():
+
+        if menuQuitButton.draw():
+            sys.exit()
+
+        if menuTutorialButton.draw():
             currentstate = "Game"
-            displayscreen.blit(background_Tutorial_1,(0,0))
-            displayscreen.blit(ChippyNormal,ChippyNormalR)
+            displayscreen.blit(background_Tutorial_1, (0, 0))
+            displayscreen.blit(ChippyNormal, ChippyNormalR)
+            visiablePlayButton = False
             if introduciton:
                 Introduction()
+
+        if visiablePlayButton:
+            if menuPlayButton.draw():
+                currentstate = "Game"
+                if runonce:
+                    pygame.time.set_timer(Test, int(playlist_Duration.get(currentSong)) * 1000, False)
+                    backsong.play()
+                    runonce = False
+                displayscreen.blit(background_Tutorial_1, (0, 0))
+                displayscreen.blit(ChippyNormal, ChippyNormalR)
+                introduciton = False
 
     if currentstate == 'Game':
 
@@ -1091,6 +1125,7 @@ while True:
             if dubButton.draw():
                 if newgame:
                     setting_bet = setting_bet * 2
+                    displayscreen.blit(stats_Surface,stats_Rect)
                     drawCard.play()
                     p1_x_offset += draw_card(p1_x_offset)
                     displayscreen.blit(bannerPic,banner_Rect)
@@ -1111,14 +1146,19 @@ while True:
             if placed_Bets and newgame == False:
                 if chip_1_button.draw():
                     chip_Calculator(1, player_Chips)
+                    placeBet.play()
                 if chip_5_button.draw():
                     chip_Calculator(5, player_Chips)
+                    placeBet.play()
                 if chip_10_button.draw():
                     chip_Calculator(10, player_Chips)
+                    placeBet.play()
                 if chip_25_button.draw():
                     chip_Calculator(25, player_Chips)
+                    placeBet.play()
                 if chip_50_button.draw():
                     chip_Calculator(50, player_Chips)
+                    placeBet.play()
 
                 if atmButton.draw():
                     currentstate = "ATM"
