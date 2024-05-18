@@ -4,12 +4,16 @@ import random
 
 pygame.init()
 
-screenheight = 720
-screenwidth = 1280
-displayscreen = pygame.display.set_mode((screenwidth, screenheight))
+screenheight = 720 # Sets the screen height to 720
+screenwidth = 1280 # Sets the screen width to 1280
+displayScreen = pygame.display.set_mode((screenwidth, screenheight)) #delcare pygame function to variable to display objects on screen
 
-Background_ATM = pygame.image.load('Backgrounds/Background - ATM.png').convert()
-Background_ATMT = pygame.image.load('Tutorial/Background - ATM.png').convert()
+# Loads a picture into a variable which then can be displayed using the displayscreen variable functions
+background_ATM = pygame.image.load('Backgrounds/Background - ATM.png').convert()
+background_ATMT = pygame.image.load('Tutorial/Background - ATM.png').convert()
+
+# .convert and .convert_alpha changes the pixel format to create a copy that will draw more faster on the screen
+# .convert alpha take alpha value for images with alpha values
 
 Background_Menu = pygame.image.load('Tutorial/Background - Game P1.png').convert()
 bannerPic = pygame.image.load('UI/Banner.png').convert_alpha()
@@ -23,12 +27,15 @@ background_Tutorial_5 = pygame.image.load("Tutorial/Background - Game P5.png").c
 background_Tutorial_6 = pygame.image.load("Tutorial/Background - Game P6.png").convert()
 background_Tutorial_7 = pygame.image.load("Tutorial/Background - Game P7.png").convert()
 background_Tutorial_8 = pygame.image.load("Tutorial/Background - Game P8.png").convert()
-
 background_Menu = pygame.image.load("Backgrounds/Menu.png").convert()
+
+# rects draw a rectangle around the object/image and can be used for collison and move via its pivot point using the x and y coordinates
+# center is telling the rect which pivot point to use when handling movement/transform
 banner_deal_Rect = banner_deal.get_rect(center = (640,45))
 banner_Rect = bannerPic.get_rect(center = (640,473))
 stats_Rect = stats_Surface.get_rect(center = (135, 249))
 
+#loading imaages to be used at different stage in program
 stick_hover = pygame.image.load('ButtonPics/Stick_Hover.png').convert_alpha()
 hit_hover = pygame.image.load('ButtonPics/Hit_hover.png').convert_alpha()
 buttonHit = pygame.image.load('ButtonPics/Hit.png').convert_alpha()
@@ -88,47 +95,49 @@ atm25mh = pygame.image.load('ButtonPics/Atm buttons/Atm hover/Small_25_hover.png
 atm50h = pygame.image.load('ButtonPics/Atm buttons/Atm hover/Small_50+_hover.png').convert_alpha()
 atm50mh = pygame.image.load('ButtonPics/Atm buttons/Atm hover/Small_50_hover.png').convert_alpha()
 
-ChippyNormal = pygame.image.load('ChippyEmotes/Normal.png').convert_alpha()
-ChippyConfused = pygame.image.load('ChippyEmotes/Confused.png').convert_alpha()
-ChippyAngry = pygame.image.load('ChippyEmotes/Angry.png').convert_alpha()
-ChippyHappy = pygame.image.load('ChippyEmotes/Happy.png').convert_alpha()
-ChippyATM = pygame.image.load('ChippyEmotes/ATM.png').convert_alpha()
-ChippyChip = pygame.image.load('ChippyEmotes/Chips.png').convert_alpha()
+chippyNormal = pygame.image.load('ChippyEmotes/Normal.png').convert_alpha()
+chippyConfused = pygame.image.load('ChippyEmotes/Confused.png').convert_alpha()
+chippyAngry = pygame.image.load('ChippyEmotes/Angry.png').convert_alpha()
+chippyHappy = pygame.image.load('ChippyEmotes/Happy.png').convert_alpha()
+chippyATM = pygame.image.load('ChippyEmotes/ATM.png').convert_alpha()
+chippyChip = pygame.image.load('ChippyEmotes/Chips.png').convert_alpha()
 
-ChippyNormalR = ChippyNormal.get_rect(center = (1145,140))
+chippyNormalR = chippyNormal.get_rect(center = (1145, 140))
 
+#inserts music from sound folder that can be used later in code
 dealerTalks = pygame.mixer.Sound('Sounds/Text_Fast.wav')
 openingATM = pygame.mixer.Sound("Sounds/OpenAtm.wav")
 closeATM = pygame.mixer.Sound("Sounds/CloseAtm.wav")
-coinssfx = pygame.mixer.Sound("Sounds/Coin+.wav")
+coinsSfx = pygame.mixer.Sound("Sounds/Coin+.wav")
 noChips = pygame.mixer.Sound('Sounds/No-coins.wav')
-backsong = pygame.mixer.Sound('Sounds/Pixel Perfect.wav')
+backGround_Song = pygame.mixer.Sound('Sounds/Pixel Perfect.wav')
 hoversfx = pygame.mixer.Sound('Sounds/Hover.wav')
-backsong2 = pygame.mixer.Sound('Sounds/Pix-Astral_bunny.WAV')
-backsong3 = pygame.mixer.Sound('Sounds/Jorge Hernandez - Chopsticks.mp3')
-backsong4 = pygame.mixer.Sound('Sounds/Skeletoni.mp3')
+backGround_Song2 = pygame.mixer.Sound('Sounds/Pix-Astral_bunny.WAV')
+backGround_Song3 = pygame.mixer.Sound('Sounds/Jorge Hernandez - Chopsticks.mp3')
+backGround_Song4 = pygame.mixer.Sound('Sounds/Skeletoni.mp3')
 drawCard = pygame.mixer.Sound('Sounds/Draw.wav')
 placeBet = pygame.mixer.Sound('Sounds/PlaceBet.wav')
 
-z = 0
+songIndex = 0 #interated throught background music set after each background song
 currentSong = 0
 
+playlist_Duration = {}  # A set to store background music duration
 
-
-playlist_Duration = {}
-backsong.set_volume(0.1)
-coinssfx.set_volume(0.5)
+#sets the sounds volume
+backGround_Song.set_volume(0.1)
+coinsSfx.set_volume(0.5)
 noChips.set_volume(1)
 closeATM.set_volume((0.7))
 
+# A set storing the background music
+background_Music = {backGround_Song, backGround_Song2, backGround_Song3, backGround_Song4}
 
-background_music = {backsong, backsong2, backsong3,backsong4}
+for x in background_Music:  # interates each index in background_Music
+    playlist_Duration[songIndex] = x.get_length() #get the time length of each background song in Background music and places in playlist_Duration
+    songIndex+=1 #Increase the index by +1
 
-for x in background_music:
-    playlist_Duration[z] = x.get_length()
-    z+=1
-
-Test = pygame.USEREVENT + 1
+#Create a new userevent
+musicManager = pygame.USEREVENT + 1
 
 #Creating Buttons
 class button():
@@ -140,62 +149,62 @@ class button():
         self.highlight = highlight
         self.high = high
         self.playonce = 0
-    def draw(self):
-        pos = pygame.mouse.get_pos()
-        action = False
-        if self.rect.collidepoint(pos):
-            self.image = self.highlight
-            if self.playonce == 0:
-                hoversfx.play()
-                self.playonce = 1
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                action = True
-                self.clicked = True
+    def draw(self):  #draws button onto screen
+        pos = pygame.mouse.get_pos() #Keeps track of mouse postion coordinates
+        action = False #Variable to return true if button has been pressed
+        if self.rect.collidepoint(pos): #Creates collison size of rect
+            self.image = self.highlight #changes image if mouse is hovering over button
+            if self.playonce == 0: #Keeps code from repeating once button is hovered over
+                hoversfx.play() # plays sounds effect
+                self.playonce = 1 # Returns true once hovered
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False: #Checks to see if player has left clicked button
+                action = True #returns true
+                self.clicked = True #make sure action doesn't repeat
 
             elif pygame.mouse.get_pressed()[0] == 0:
-                self.clicked = False
-        elif self.rect.collidepoint != True:
-            self.image = self.high
+                self.clicked = False #checks to see once left click has been realsed
+        elif self.rect.collidepoint != True: # checks to see if mouse is not hovering over button
+            self.image = self.high #changes the image back to the orginal
             self.playonce = 0
 
-        displayscreen.blit(self.image,(self.rect.x,self.rect.y))
+        displayScreen.blit(self.image, (self.rect.x, self.rect.y)) #displays button where specified
 
-        return action
+        return action #return action to true
 
-class textSurface:
+class textSurface: # Create text to be displyed on scren
     def __init__(self,variable,antialias,colour,x,y, size = 30):
-        score = pygame.font.Font('04B_19__.TTF', size)
-        self.variable = score.render(str(variable), antialias,colour)
-        self.rect = self.variable.get_rect()
-        self.rect.center = (x,y)
-        self.size = size
+        score = pygame.font.Font('04B_19__.TTF', size)  #sets the font and size of font
+        self.variable = score.render(str(variable), antialias,colour) #Takes veriable and turns it into a string in the case variable is a float or intager
+        self.rect = self.variable.get_rect() #creates rect for veriable
+        self.rect.center = (x,y) # sets the pivot point and coordinates for rect
+        self.size = size # sets size of text
     def draw(self):
-        displayscreen.blit(self.variable,(self.rect.x,self.rect.y))
+        displayScreen.blit(self.variable, (self.rect.x, self.rect.y)) #displays text to screen
 
-class SpeechBubble:
+class SpeechBubble: #creates speech bubble for AI tutorial
     def __init__(self,text,x,y,text_size = 20):
-            self.x = x
-            self.y = y
-            self.text_size = text_size
+            self.x = x  #delcares x coordinate
+            self.y = y  #delcares y coordinate
+            self.text_size = text_size # declares text size
             font = pygame.font.Font('pixelmix.ttf', text_size)
             self.render = font.render(text, 1, 'Black')
             self.text_rect = self.render.get_rect(midright=(self.x, self.y))
-            self.inflate = self.text_rect.inflate(10, 10)
+            self.inflate = self.text_rect.inflate(10, 10) # .inflate expands the rects dimentions by a declared amount
             self.outline = self.render.get_rect(midright=(self.x, self.y))
             self.outlineinflate = self.outline.inflate(15, 15)
 
-    def drawBubble(self):
-        pygame.draw.rect(displayscreen, (0, 0, 0), self.outlineinflate)
-        pygame.draw.rect(displayscreen, (255, 255, 255), self.inflate)
-        displayscreen.blit(self.render, self.text_rect)
+    def drawBubble(self): #creates speech bubbles onto screen
+        pygame.draw.rect(displayScreen, (0, 0, 0), self.outlineinflate) #Displays the outline rect
+        pygame.draw.rect(displayScreen, (255, 255, 255), self.inflate) #displays the white box rect
+        displayScreen.blit(self.render, self.text_rect) #displays string delcared within both rects
 
 
-def aiupdatespeech(milliseconds):
-    pygame.display.update()
-    dealerTalks.play()
-    pygame.time.wait(milliseconds)
+def aiupdatespeech(milliseconds): #stops the game for a delcare amount of time for player to read text
+    pygame.display.update() #Updates screen with new content which has been rendered
+    dealerTalks.play() #plays dealers sound
+    pygame.time.wait(milliseconds) #stops the game until specified time is over
 
-
+#Creates buttons using the Button class
 menuPlayButton = button(480,620,playMenu,playMenuHover,playMenu)
 menuTutorialButton = button(685, 620, tutorialButton,tutorialButtonHover,tutorialButton)
 menuQuitButton = button(880,620,quitMenu,quitMenuHover,quitMenu)
@@ -227,6 +236,7 @@ at25mb = button(730, 558,atm25m,atm25mh,atm25m)
 at50b = button(820, 478,atm50,atm50h,atm50)
 at50mb = button(820, 558,atm50m,atm50mh,atm50m)
 
+#Creates speech bubbles using the speechbubbles class
 AiSpeech1 = SpeechBubble("Oh hello!",1000,50)
 AiSpeech2 = SpeechBubble("It's a pleasure to meet you, my name is Chippy!",1000,50)
 AiSpeech3 = SpeechBubble("I Shall be your dealer for this session.",1000,50)
@@ -259,45 +269,45 @@ AiSpeech8ATM = SpeechBubble("Whilst the Joycon button on the right will take you
 AiSpeech9ATM = SpeechBubble("Try taking some chips out of the bank and heading back to table.",1000,50,20)
 
 
-chip_color = 'White'
-chip_Bank = 250
-players_chips = 0
-setting_bet = 0
-visiablePlayButton = True
-introduciton = True
-inGame = True
-placed_Bets = True
-endgame = False
-bust = False
-aiStick = False
-aiBust = False
-runonce = True
-p1_x_offset = 0
-p2_x_offset = 0
-new = 0
-newgame = False
-currentPlayer = 1
-currentstate = 'Menu'
-p1_cardScore = 0
-p2_cardScore = 0
-card_images = {}
-suits = ['c', 'd', 'h', 's']
-ranks = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13']
+chip_color = 'White' #set the colour of chip balance back to white when not valued at 0
+chip_Bank = 250 #players bank with a preset of 250 chips the player can play with
+players_chips = 0 #Players balance when playing throughout the game
+setting_bet = 0 #Chip bet when playing a game
+visiablePlayButton = True #Hides the menus play button during the tutorial
+introduciton = True #Plays AI tutorial if true
+inGame = True #Checks to see if the player is playing  a round
+placed_Bets = True #Checks to see if player has placed any bets before starting a round
+endgame = False  #Checks to see if a round has ended
+bust = False #Checks to see if the player has bust
+aiStick = False #Checks to see if the ai has stuck
+aiBust = False #Checks to see if the ai has bust
+runonce = True #A run once function that runs if equal to true
+p1_x_offset = 0 # delcares player one card offset to 0
+p2_x_offset = 0 # delcares player two card offset to 0
+new = 0 #Iterates once a new game has started giving both players two cards each exiting loop once achieved
+newgame = False # checks to see if a newgame has started
+currentPlayer = 1  #set the current player
+currentstate = 'Menu' # set the current state
+p1_cardScore = 0 #player one total card score when drawing cards
+p2_cardScore = 0 #player two total card score when drawing cards
+card_images = {} #Delcares a dictionary
+suits = ['c', 'd', 'h', 's'] # delcares a tuple with four indexes
+ranks = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13'] #declares tuple with 13 indexes
 
 set_Bets = textSurface(setting_bet, True, 'White', 140, 375)
 
-for suit in suits:
-    for rank in ranks:
-        image_path = os.path.join("cards", f"{suit}{rank}.png")
-        original_image = pygame.image.load(image_path)
-        scaled_image = pygame.transform.scale(original_image, (112, 150))
-        card_images[(rank, suit)] = scaled_image
+for suit in suits: #for loop that interate through suits tuple
+    for rank in ranks: #for loop that iterates through ranks tuple
+        image_path = os.path.join("cards", f"{suit}{rank}.png") #selects a image withing the cards folder depending on suit and rank and store it into a variable
+        original_image = pygame.image.load(image_path) #creates piture into variable
+        scaled_image = pygame.transform.scale(original_image, (112, 150))  #scale picture
+        card_images[(rank, suit)] = scaled_image #sets the key and value in dictionary
 
-
+ #seperates key and value inside from a  dictionary and delcares them into two seperate variables randomly
 card_key, card_value = random.choice(list(card_images.items()))
 
-def restackCheck():
-    if len(card_images) == 0:
+def restackCheck(): # checks to see if the deck is at 0 if so then refill the deck
+    if len(card_images) == 0:  #checks the lenth of the card_images dictionary
         for suit in suits:
             for rank in ranks:
                 image_path = os.path.join("cards", f"{suit}{rank}.png")
@@ -305,117 +315,118 @@ def restackCheck():
                 scaled_image = pygame.transform.scale(original_image, (112, 150))
                 card_images[(rank, suit)] = scaled_image
 
-def Introduction():
-    global runonce
+def Introduction(): #Plays the AI tutorial
+    global runonce #Makes runone global scope instead of local
 
-    if currentstate == "Game":
+    if currentstate == "Game": #checks current state = game
         if runonce:
-            pygame.time.set_timer(Test, int(playlist_Duration.get(currentSong)) * 1000, False)
-            backsong.play()
+            #Actives events with the song duration as the set timer
+            pygame.time.set_timer(musicManager, int(playlist_Duration.get(currentSong)) * 1000, False)
+            backGround_Song.play()
             runonce = False
-        displayscreen.blit(background_Tutorial_1,(0,0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0)) #displays image to screen
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech1.drawBubble()
-        aiupdatespeech(3000)
-        displayscreen.blit(background_Tutorial_1,(0,0))
-        displayscreen.blit(ChippyHappy,ChippyNormalR)
+        aiupdatespeech(3000) #calls a function with the paramater of delayed time in milliseconds
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyHappy, chippyNormalR)
         AiSpeech2.drawBubble()
         aiupdatespeech(3000)
-        displayscreen.blit(background_Tutorial_1,(0,0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech3.drawBubble()
         aiupdatespeech(3000)
-        displayscreen.blit(background_Tutorial_1,(0,0))
-        displayscreen.blit(ChippyConfused,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyConfused, chippyNormalR)
         AiSpeech4.drawBubble()
         aiupdatespeech(3000)
-        displayscreen.blit(background_Tutorial_1,(0,0))
-        displayscreen.blit(ChippyHappy,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyHappy, chippyNormalR)
         AiSpeech5.drawBubble()
         aiupdatespeech(3000)
-        displayscreen.blit(background_Tutorial_1,(0,0))
-        displayscreen.blit(ChippyChip,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyChip, chippyNormalR)
         AiSpeech6.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_2,(0,0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_2, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech7.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_2,(0,0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_2, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech8.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_3, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_3, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech9.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_1, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech10.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_1, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech11.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_4, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_4, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech12.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_5, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_5, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech13.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_6, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_6, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech14.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_7, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_7, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech15.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_1, (0, 0))
-        displayscreen.blit(ChippyNormal,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyNormal, chippyNormalR)
         AiSpeech16.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_8, (0, 0))
-        displayscreen.blit(ChippyATM,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_8, (0, 0))
+        displayScreen.blit(chippyATM, chippyNormalR)
         AiSpeech17.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(background_Tutorial_1, (0, 0))
-        displayscreen.blit(ChippyATM,ChippyNormalR)
+        displayScreen.blit(background_Tutorial_1, (0, 0))
+        displayScreen.blit(chippyATM, chippyNormalR)
 
 
     if currentstate == 'ATM':
         global introduciton
 
-        displayscreen.blit(Background_ATMT,(0,0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech1ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech2ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech3ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech4ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech5ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech6ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech7ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech8ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATMT, (0, 0))
+        displayScreen.blit(background_ATMT, (0, 0))
         AiSpeech9ATM.drawBubble()
         aiupdatespeech(4000)
-        displayscreen.blit(Background_ATM, (0, 0))
+        displayScreen.blit(background_ATM, (0, 0))
 
         introduciton = False
 def textRender():
@@ -426,81 +437,74 @@ def textRender():
     player_chip_amount = textSurface(players_chips,True,'White', 820,200)
 
     if currentstate == 'Game':
-        playersScoreText.draw()
-        dealerScoreText.draw()
+        playersScoreText.draw() #draws players score on screen
+        dealerScoreText.draw() #draws dealers score on screen
         players_Bank.draw()
         set_Bets.draw()
     elif currentstate == 'ATM':
-        players_Bank.rect.x = 440
+        players_Bank.rect.x = 440 #changing the text coordinates if state = ATM
         players_Bank.rect.y = 190
         players_Bank.size = 500
         players_Bank.draw()
         player_chip_amount.draw()
 def check_Score():
-    global aiStick
-    global aiBust
-    global currentPlayer
-    global endgame
-    global bust
+    global aiStick,aiBust,currentPlayer, endgame,bust
 
-
-    if currentPlayer == 1 and p1_cardScore > 21:
+    if currentPlayer == 1 and p1_cardScore > 21:  #Check to see if player one has bust
         bust = True
         currentPlayer = 2
         pygame.display.update()
     if currentPlayer == 2:
-        if p2_cardScore >= 16 and p2_cardScore <= 21:
+        if p2_cardScore >= 16 and p2_cardScore <= 21: # checks to see if AI score is between 16 and 21
             aiStick = True
             endgame = True
-        elif p2_cardScore > 21:
+        elif p2_cardScore > 21:  #checks to see if AI has bust
             aiBust = True
             endgame = True
-    if endgame:
-        winCondition(p1_cardScore, p2_cardScore)
-def winCondition(p1_cardscore, p2_cardscore):
-    global p1_cardScore
-    global p2_cardScore
-    global players_chips
-    global setting_bet
+    if endgame: #Checks to see when the AI has either stuck or bust
+        winCondition(p1_cardScore, p2_cardScore) #calls the winCondition fuction passing the players total card score has paramters
+def winCondition(p1_cardscore, p2_cardscore): # checks players score against each other
+    global p1_cardScore,p2_cardScore,players_chips,setting_bet
+
     dealerScoreText = textSurface(p2_cardScore, True, "White", 645, 41)
     playersScoreText = textSurface(p1_cardScore, True, 'White', 645, 480)
 
-    if p1_cardscore > p2_cardscore and bust == False:
-        print("Win")
-        displayscreen.blit(banner_deal,banner_deal_Rect)
-        displayscreen.blit(bannerPic,banner_Rect)
+    if p1_cardscore > p2_cardscore and bust == False: #Checks to see if player score is higher than Ai if not bust
+        print("Win") #Debug testing
+        displayScreen.blit(banner_deal, banner_deal_Rect)
+        displayScreen.blit(bannerPic, banner_Rect)
         dealerScoreText.draw()
         playersScoreText.draw()
-        displayscreen.blit(ChippyHappy,ChippyNormalR)
+        displayScreen.blit(chippyHappy, chippyNormalR)
+        Aiwin.drawBubble()
+        dealerTalks.play()
+        players_chips += setting_bet * 2 # doubles the placed bet and add it to the players balance
+        pygame.display.update()
+        pygame.time.delay(3000)
+        newGame()
+
+    elif p1_cardscore < p2_cardscore and aiBust: #Checks to see if the players score is less than the AI whilst bust
+        print("Win")
+        displayScreen.blit(banner_deal, banner_deal_Rect)
+        displayScreen.blit(bannerPic, banner_Rect)
+        dealerScoreText.draw()
+        playersScoreText.draw()
+        displayScreen.blit(chippyHappy, chippyNormalR)
         Aiwin.drawBubble()
         dealerTalks.play()
         players_chips += setting_bet * 2
         pygame.display.update()
         pygame.time.delay(3000)
-        newGame()
-
-    elif p1_cardscore < p2_cardscore and aiBust:
-        print("Win")
-        displayscreen.blit(banner_deal, banner_deal_Rect)
-        displayscreen.blit(bannerPic,banner_Rect)
-        dealerScoreText.draw()
-        playersScoreText.draw()
-        displayscreen.blit(ChippyHappy, ChippyNormalR)
-        Aiwin.drawBubble()
-        dealerTalks.play()
-        players_chips += setting_bet * 2
-        pygame.display.update()
-        pygame.time.delay(3000)
 
         newGame()
 
-    elif p1_cardscore < p2_cardscore and aiBust == False and bust == False:
+    elif p1_cardscore < p2_cardscore and aiBust == False and bust == False: #Checks to see if players score is less than AI
         print("Lost")
-        displayscreen.blit(banner_deal, banner_deal_Rect)
-        displayscreen.blit(bannerPic,banner_Rect)
+        displayScreen.blit(banner_deal, banner_deal_Rect)
+        displayScreen.blit(bannerPic, banner_Rect)
         dealerScoreText.draw()
         playersScoreText.draw()
-        displayscreen.blit(ChippyAngry, ChippyNormalR)
+        displayScreen.blit(chippyAngry, chippyNormalR)
         Ailost.drawBubble()
         dealerTalks.play()
 
@@ -508,59 +512,59 @@ def winCondition(p1_cardscore, p2_cardscore):
         pygame.time.delay(3000)
         newGame()
 
-    elif p1_cardscore > p2_cardscore and bust and aiBust == False:
+    elif p1_cardscore > p2_cardscore and bust and aiBust == False: #Checks to see if players score is higher than AI but bust
         print("Lost")
-        displayscreen.blit(banner_deal, banner_deal_Rect)
-        displayscreen.blit(bannerPic,banner_Rect)
+        displayScreen.blit(banner_deal, banner_deal_Rect)
+        displayScreen.blit(bannerPic, banner_Rect)
         dealerScoreText.draw()
         playersScoreText.draw()
-        displayscreen.blit(ChippyAngry, ChippyNormalR)
+        displayScreen.blit(chippyAngry, chippyNormalR)
         Ailost.drawBubble()
         dealerTalks.play()
         pygame.display.update()
         pygame.time.delay(3000)
         newGame()
 
-    elif p1_cardscore == p2_cardscore and bust == False and aiBust == False:
+    elif p1_cardscore == p2_cardscore and bust == False and aiBust == False: #Checks to see if both players havent bust but equal score
         print("Draw")
-        displayscreen.blit(banner_deal, banner_deal_Rect)
-        displayscreen.blit(bannerPic,banner_Rect)
+        displayScreen.blit(banner_deal, banner_deal_Rect)
+        displayScreen.blit(bannerPic, banner_Rect)
         dealerScoreText.draw()
         playersScoreText.draw()
-        displayscreen.blit(ChippyConfused, ChippyNormalR)
+        displayScreen.blit(chippyConfused, chippyNormalR)
         Aidraw.drawBubble()
         dealerTalks.play()
-        players_chips += setting_bet
+        players_chips += setting_bet #Returns setting bet back to player
         pygame.display.update()
         pygame.time.delay(3000)
         newGame()
 
-    elif p1_cardscore > 21 and p2_cardscore > 21 and bust and aiBust:
+    elif p1_cardscore > 21 and p2_cardscore > 21 and bust and aiBust: #Check to see if both player and AI have bust
         print("Draw")
-        displayscreen.blit(banner_deal, banner_deal_Rect)
-        displayscreen.blit(bannerPic,banner_Rect)
+        displayScreen.blit(banner_deal, banner_deal_Rect)
+        displayScreen.blit(bannerPic, banner_Rect)
         dealerScoreText.draw()
         playersScoreText.draw()
-        displayscreen.blit(ChippyConfused, ChippyNormalR)
+        displayScreen.blit(chippyConfused, chippyNormalR)
         Aidraw.drawBubble()
         dealerTalks.play()
         players_chips += setting_bet
         pygame.display.update()
         pygame.time.delay(3000)
         newGame()
-def chip_Calculator(chip_input,player_Chips):
-    global players_chips
-    global setting_bet
-    match chip_input:
+def chip_Calculator(chip_input,player_Chips): #Checks if the player has the currect balance for setting bets
+    global players_chips, setting_bet
+
+    match chip_input: #checks value when player hits one of the chips button and compares it against cases
         case 1:
-            if players_chips <= 0:
+            if players_chips <= 0: # checks if players current balance is less or equal to 0
                 print('you dont have enough!')
                 noChips.play()
 
-            elif players_chips >= 1:
+            elif players_chips >= 1:  #Check if players current balance is greater or equal to one
 
-                players_chips -= 1
-                setting_bet += 1
+                players_chips -= 1  #Takes one value of players balance
+                setting_bet += 1    #Add plus 1 to setting bets value
         case 5:
             if players_chips < 5:
                 print('you dont have enough!')
@@ -590,24 +594,15 @@ def chip_Calculator(chip_input,player_Chips):
                 players_chips -= 50
                 setting_bet += 50
 def newGame():
-    os.system('cls')
-    global p1_cardScore
-    global p2_cardScore
-    global setting_bet
-    global new
-    global currentPlayer
-    global newgame
-    global endgame
-    global aiStick
-    global aiBust
-    global p1_x_offset
-    global p2_x_offset
-    global bust
+    global p1_cardScore,p2_cardScore,setting_bet,new,currentPlayer,newgame,endgame,aiStick,aiBust
+    global p1_x_offset,p2_x_offset,bust
 
-    restackCheck()
+    restackCheck()  #Call the restackCheck function
+
+    #Sets all values back to defaults
     endgame = False
-    displayscreen.blit(Background_Menu, (0, 0))
-    displayscreen.blit(ChippyNormal,ChippyNormalR)
+    displayScreen.blit(Background_Menu, (0, 0))
+    displayScreen.blit(chippyNormal, chippyNormalR)
     p1_x_offset = 0
     p2_x_offset = 0
     p1_cardScore = 0
@@ -620,9 +615,8 @@ def newGame():
     newgame = False
     bust = False
 
-def card_Score(cardscore):
-    global p1_cardScore
-    global p2_cardScore
+def card_Score(cardscore): #checks the card that has been drawn and adds the value to the players or AI cardscore
+    global p1_cardScore, p2_cardScore
 
     match cardscore:
         case ('01', 'h'):
@@ -885,23 +879,23 @@ def card_Score(cardscore):
                 p1_cardScore += 10
             else:
                 p2_cardScore += 10
-def draw_card(x_offset):
-    card_key = random.choice(list(card_images.keys()))
-    space_between_cards = 50
-    p1_initial_x = 400
-    p1_initial_y = 270
+def draw_card(x_offset): # draws a random card from deck with the player or AI offset as an argument
+    card_key = random.choice(list(card_images.keys())) #converts the dictionary into a list and takes a random key value from that list
+    space_between_cards = 50 # delcares an integer which makes a space between cards so they dont stack
+    p1_initial_x = 400 #setting players cards x location
+    p1_initial_y = 270 #setting players cards y location
     p2_initial_x = 400
     p2_initial_y = 90
 
     if currentPlayer == 1:
-        displayscreen.blit(card_images[card_key], (p1_initial_x + x_offset, p1_initial_y))
-        x_offset = space_between_cards
-        card_Score(card_key)
-        card_images.pop(card_key)
-        print(len(card_images))
+        displayScreen.blit(card_images[card_key], (p1_initial_x + x_offset, p1_initial_y))
+        x_offset = space_between_cards #adding value to x_offset
+        card_Score(card_key) #calls the cards score with the key as a paramater
+        card_images.pop(card_key)  #deletes card from deck
+        print(len(card_images)) #debugging checking length of deck once card has popped
 
-    elif currentPlayer == 2 and aiStick == False and aiBust == False:
-        displayscreen.blit(card_images[card_key], (p2_initial_x + x_offset, p2_initial_y))
+    elif currentPlayer == 2 and aiStick == False and aiBust == False: #Ai taking their turn and drawing cards
+        displayScreen.blit(card_images[card_key], (p2_initial_x + x_offset, p2_initial_y))
         x_offset = space_between_cards
         pygame.display.update()
         card_Score(card_key)
@@ -909,61 +903,63 @@ def draw_card(x_offset):
         print(len(card_images))
     return x_offset
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+while True: #Main game loop
+    for event in pygame.event.get(): #interates event functions in event.get
+        if event.type == pygame.QUIT: #checks to see if the player clicks the close/quit button on window
+            pygame.quit() #exit game
+            sys.exit() # terminates the execution of a Python program without error
 
-        if event.type == Test:
+        if event.type == musicManager: #activates on the user event has been triggered switching indexes once song is finished
             if currentSong == 0:
-                backsong2.play()
+                backGround_Song2.play()
                 currentSong += 1
                 print(currentSong)
                 print("first song start")
             elif currentSong == 1:
                 print(currentSong)
-                backsong3.play()
+                backGround_Song3.play()
                 currentSong += 1
                 print("second song finished")
             elif currentSong == 2:
-                backsong4.play()
+                backGround_Song4.play()
                 currentSong += 1
                 print("Third song finished")
             elif currentSong == 3:
-                backsong.play()
+                backGround_Song.play()
                 currentSong = 0
                 print("Third song finished")
 
     if currentstate == 'ATM':
-        if introduciton:
-            Introduction()
+        if introduciton: #checks to see if introduction = True
+            Introduction() #calls introduction function
 
-        displayscreen.blit(Background_ATM, (0, 0))
+        displayScreen.blit(background_ATM, (0, 0))
 
-        textRender()
+        textRender()#renders text to screen
 
-        if at1b.draw():
+        #Drawing buttons atm buttons onto screen
+
+        if at1b.draw(): #draws atm buttons to screen
             if chip_Bank > 0:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank -= 1
                 players_chips += 1
-            else:
+            else: #checks to see if players has deposit
                 noChips.play()
                 print("bank don't have enough")
 
         if at1mb.draw():
             if players_chips > 0:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank += 1
                 players_chips -= 1
-            else:
+            else:  #Checks to see if player has enough to withdraw
                 noChips.play()
                 print("you cant deposit anymore")
 
         if at5b.draw():
             if chip_Bank >= 5:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank -= 5
                 players_chips += 5
             else:
@@ -972,7 +968,7 @@ while True:
 
         if at5mb.draw():
             if players_chips >= 5:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank += 5
                 players_chips -= 5
             else:
@@ -981,7 +977,7 @@ while True:
 
         if at10b.draw():
             if chip_Bank >= 10:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank -= 10
                 players_chips += 10
             else:
@@ -990,7 +986,7 @@ while True:
 
         if at10mb.draw():
             if players_chips >= 10:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank += 10
                 players_chips -= 10
             else:
@@ -999,7 +995,7 @@ while True:
 
         if at25b.draw():
             if chip_Bank >= 25:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank -= 25
                 players_chips += 25
             else:
@@ -1008,7 +1004,7 @@ while True:
 
         if at25mb.draw():
             if players_chips >= 25:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank += 25
                 players_chips -= 25
             else:
@@ -1017,7 +1013,7 @@ while True:
 
         if at50b.draw():
             if chip_Bank >= 50:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank -= 50
                 players_chips += 50
             else:
@@ -1026,7 +1022,7 @@ while True:
 
         if at50mb.draw():
             if players_chips >= 50:
-                coinssfx.play()
+                coinsSfx.play()
                 chip_Bank += 50
                 players_chips -= 50
             else:
@@ -1036,39 +1032,41 @@ while True:
         if depositButton.draw():
             chip_Bank += players_chips
             players_chips = 0
-            coinssfx.play()
+            coinsSfx.play()
 
         if WithdrawButton.draw():
             players_chips += chip_Bank
             chip_Bank = 0
-            coinssfx.play()
+            coinsSfx.play()
 
-
+        #draws menubutton onto screen
         if menuButton.draw():
             currentstate = "Menu"
 
+        #draws game button onto screen
         if gameButton.draw():
             currentstate = 'Game'
             closeATM.play()
-            displayscreen.blit(Background_Menu, (0, 0))
-            displayscreen.blit(ChippyNormal,ChippyNormalR)
+            displayScreen.blit(Background_Menu, (0, 0))
+            displayScreen.blit(chippyNormal, chippyNormalR)
             pygame.display.update()
 
 
 
-    if currentstate == 'Menu':
+    if currentstate == 'Menu': #checks if current state = Menu
         introduciton = True
         visiablePlayButton = True
 
-        displayscreen.blit(background_Menu, (0, 0))
+        displayScreen.blit(background_Menu, (0, 0))
 
+        #Draws menu,tutorial and play buttons onto screen
         if menuQuitButton.draw():
             sys.exit()
 
         if menuTutorialButton.draw():
             currentstate = "Game"
-            displayscreen.blit(background_Tutorial_1, (0, 0))
-            displayscreen.blit(ChippyNormal, ChippyNormalR)
+            displayScreen.blit(background_Tutorial_1, (0, 0))
+            displayScreen.blit(chippyNormal, chippyNormalR)
             visiablePlayButton = False
             if introduciton:
                 Introduction()
@@ -1077,39 +1075,40 @@ while True:
             if menuPlayButton.draw():
                 currentstate = "Game"
                 if runonce:
-                    pygame.time.set_timer(Test, int(playlist_Duration.get(currentSong)) * 1000, False)
-                    backsong.play()
+                    pygame.time.set_timer(musicManager, int(playlist_Duration.get(currentSong)) * 1000, False)
+                    backGround_Song.play()
                     runonce = False
-                displayscreen.blit(background_Tutorial_1, (0, 0))
-                displayscreen.blit(ChippyNormal, ChippyNormalR)
+                displayScreen.blit(background_Tutorial_1, (0, 0))
+                displayScreen.blit(chippyNormal, chippyNormalR)
                 introduciton = False
 
     if currentstate == 'Game':
 
         pygame.display.update()
 
-        if inGame:
-            displayscreen.blit(stats_Surface, stats_Rect)
-            displayscreen.blit(bannerPic, banner_Rect)
-            displayscreen.blit(banner_deal, banner_deal_Rect)
+        if inGame: # checks to see if the player is playing a round of blackjack and displays default scores
+            displayScreen.blit(stats_Surface, stats_Rect)
+            displayScreen.blit(bannerPic, banner_Rect)
+            displayScreen.blit(banner_deal, banner_deal_Rect)
 
             textRender()
 
             player_Chips = textSurface(players_chips, True, chip_color, 140, 268)
             player_Chips.draw()
 
-            if players_chips <= 0:
+            if players_chips <= 0:  #checks to see if players balance is equal to 0
                 chip_color = 'Red'
 
-            else:
+            else:  # checks to see if players balance is above 0
                 chip_color = 'White'
 
+            #draws hit button onto screen
             if hit_button.draw():
-                if setting_bet > 0 and newgame:
+                if setting_bet > 0 and newgame: #check to see if the player is playing a round
                     drawCard.play()
                     p1_x_offset += draw_card(p1_x_offset)
                     check_Score()
-                else:
+                else: # if player is not playing a round
                     noChips.play()
                     print("Please place your bets")
 
@@ -1125,10 +1124,10 @@ while True:
             if dubButton.draw():
                 if newgame:
                     setting_bet = setting_bet * 2
-                    displayscreen.blit(stats_Surface,stats_Rect)
+                    displayScreen.blit(stats_Surface, stats_Rect)
                     drawCard.play()
                     p1_x_offset += draw_card(p1_x_offset)
-                    displayscreen.blit(bannerPic,banner_Rect)
+                    displayScreen.blit(bannerPic, banner_Rect)
                     check_Score()
                     set_Bets.draw()
                     pygame.display.update()
@@ -1137,13 +1136,13 @@ while True:
 
 
             if playButton.draw():
-                if newgame == False and setting_bet > 0:
+                if newgame == False and setting_bet > 0:  #checks if player is not currently playing a round and has placed a bet
                     newgame = True
                 else:
                     print("in play")
                     noChips.play()
 
-            if placed_Bets and newgame == False:
+            if placed_Bets and newgame == False: #checks if player is currently in game and if not then they can place bets
                 if chip_1_button.draw():
                     chip_Calculator(1, player_Chips)
                     placeBet.play()
@@ -1160,30 +1159,30 @@ while True:
                     chip_Calculator(50, player_Chips)
                     placeBet.play()
 
-                if atmButton.draw():
+
+                if atmButton.draw(): #Disables during a round
                     currentstate = "ATM"
 
-                if GmenuButton.draw():
+                if GmenuButton.draw(): #Disables during a round
                     currentstate = "Menu"
 
-                if QuitButtons.draw():
+                if QuitButtons.draw(): #Disables during a round
                     pygame.quit()
                     sys.exit()
 
-            # ======================================================================================================================
 
-            if newgame:
-                while new < 2:
-                    p1_x_offset += draw_card(p1_x_offset)
+            if newgame: #checks if new game = true
+                while new < 2: # repeats block of code until new is equal to 2
+                    p1_x_offset += draw_card(p1_x_offset)  #draws a player card
                     restackCheck()
                     currentPlayer = 2
-                    p2_x_offset += draw_card(p2_x_offset)
+                    p2_x_offset += draw_card(p2_x_offset) #draws the dealer a card
                     restackCheck()
                     currentPlayer = 1
                     new += 1
                     restackCheck()
 
-                if p2_cardScore >= 16 and p2_cardScore <= 21:
+                if p2_cardScore >= 16 and p2_cardScore <= 21:  #checks if dealers card score is between 16 and 21 at the start of game
                     aiStick = True
 
             if currentPlayer == 2 and aiBust == False:
