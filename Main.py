@@ -1,8 +1,8 @@
-import pygame, sys
-import os
-import random
+import pygame, sys #provides various functions and variables that are used to manipulate different parts of the Python runtime environment.
+import os # creates files and directories, management of files and directories, input, output, environment variables, process management, etc.
+import random #defines a series of functions for generating or manipulating random integers
 
-pygame.init()
+pygame.init() #initates pygame
 
 screenheight = 720 # Sets the screen height to 720
 screenwidth = 1280 # Sets the screen width to 1280
